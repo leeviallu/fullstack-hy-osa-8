@@ -1,0 +1,16 @@
+{
+    "name": "qraphql-library-backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "dev": "nodemon index.js"
+    },
+    "author": "Leevi Leppänen",
+    "license": "ISC",
+    "dependencies": {
+        "@apollo/server": "^4.7.1",
+        "graphql": "^16.6.0",
+        "nodemon": "^2.0.22"
+    }
+}
