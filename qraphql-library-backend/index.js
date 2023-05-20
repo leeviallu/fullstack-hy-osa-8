@@ -93,13 +93,8 @@ let books = [
     },
 ];
 
-/*
-  you can remove the placeholder query once your first own has been implemented 
-*/
-
 const typeDefs = `
   type Query {
-    dummy: Int
     bookCount: Int
     authorCount: Int
     allBooks: [Book!]
@@ -119,7 +114,6 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
-        dummy: () => 0,
         bookCount: () => books.length,
         authorCount: () => authors.length,
         allBooks: () => books,
