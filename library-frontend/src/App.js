@@ -7,9 +7,15 @@ const App = () => {
     return (
         <div>
             <div>
-                <Link to="/authors">authors</Link>
-                <Link to="/books">books</Link>
-                <Link to="/newbook">newbook</Link>
+                <button>
+                    <Link to="/authors">authors</Link>
+                </button>
+                <button>
+                    <Link to="/books">books</Link>
+                </button>
+                <button>
+                    <Link to="/newbook">newbook</Link>
+                </button>
             </div>
             <Routes>
                 <Route path="/authors" element={<Authors />} />
