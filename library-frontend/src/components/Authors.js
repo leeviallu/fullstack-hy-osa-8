@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@apollo/client";
 import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries";
+import Select from "react-select";
 
 const Authors = () => {
     const [name, setName] = useState("");
@@ -20,6 +21,10 @@ const Authors = () => {
         return null;
     }
     const authors = result.data.allAuthors;
+    const nameOptions = [];
+    authors.map((author) =>
+        nameOptions.push({ value: author.name, label: author.name })
+    );
     return (
         <div>
             <h2>authors</h2>
@@ -42,9 +47,15 @@ const Authors = () => {
             <form onSubmit={submit}>
                 <div>
                     name
-                    <input
-                        value={name}
-                        onChange={({ target }) => setName(target.value)}
+                    <Select
+                        className="basic-single"
+                        classNamePrefix="select"
+                        isClearable={true}
+                        isSearchable={true}
+                        options={nameOptions}
+                        onChange={(selected) => {
+                            setName(selected.value);
+                        }}
                     />
                 </div>
                 <div>
