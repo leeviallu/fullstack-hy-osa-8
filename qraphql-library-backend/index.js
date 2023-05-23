@@ -2,6 +2,25 @@ const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { v1: uuid } = require("uuid");
 
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const Author = require("./models/author");
+const Book = require("./models/book");
+require("dotenv").config();
+
+const MONGODB_URI = process.env.MONGODB_URI;
+
+console.log("connecting to", MONGODB_URI);
+
+mongoose
+    .connect(MONGODB_URI)
+    .then(() => {
+        console.log("connected to MongoDB");
+    })
+    .catch((error) => {
+        console.log("error connection to MongoDB:", error.message);
+    });
+
 let authors = [
     {
         name: "Robert Martin",
@@ -92,6 +111,7 @@ const typeDefs = `
     author: String
     published: Int
     genres: [String]
+    id: ID!
   }
   type Author {
     name: String
@@ -115,8 +135,8 @@ const typeDefs = `
 
 const resolvers = {
     Query: {
-        bookCount: () => books.length,
-        authorCount: () => authors.length,
+        bookCount: () => Book.collection.countDocuments(),
+        authorCount: () => Author.collection.countDocuments(),
         allBooks: (root, args) => {
             if (!args.author && !args.genre) {
                 return books;
@@ -165,28 +185,24 @@ const resolvers = {
         born: (root) => root.born,
     },
     Mutation: {
-        addBook: (root, args) => {
-            if (
-                books.find((b) => b.title === args.title) &&
-                authors.find((a) => a.name === args.author)
-            ) {
-                throw new GraphQLError(
-                    "Author must release books with unique title",
-                    {
-                        extensions: {
-                            code: "BAD_USER_INPUT",
-                            invalidArgs: [args.title, args.author],
-                        },
-                    }
-                );
+        addBook: async (root, args) => {
+            const findAuthorByName = await Author.collection.findOne({
+                name: args.author,
+            });
+            if (!findAuthorByName) {
+                const author = new Author({
+                    name: args.author,
+                });
+                const newAuthor = await author.save();
+                const book = new Book({ ...args, author: newAuthor._id });
+                const newBook = await book.save();
+                return newBook;
+            } else {
+                const author = findAuthorByName;
+                const book = new Book({ ...args, author: author._id });
+                const newBook = await book.save();
+                return newBook;
             }
-            if (!authors.find((a) => a.name === args.author)) {
-                const author = { name: args.author, id: uuid() };
-                authors = authors.concat(author);
-            }
-            const book = { ...args, id: uuid() };
-            books = books.concat(book);
-            return book;
         },
         editAuthor: (root, args) => {
             const author = authors.find((a) => a.name === args.name);
