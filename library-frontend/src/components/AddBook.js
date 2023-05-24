@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useMutation } from "@apollo/client";
 import { CREATE_BOOK } from "../queries";
 
-const NewBook = () => {
+const AddBook = ({ token }) => {
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
     const [published, setPublished] = useState("");
@@ -24,6 +24,10 @@ const NewBook = () => {
         setGenres(genres.concat(genre));
         setGenre("");
     };
+
+    if (!token) {
+        return <div>No access without logging in</div>;
+    }
 
     return (
         <div>
@@ -68,4 +72,4 @@ const NewBook = () => {
     );
 };
 
-export default NewBook;
+export default AddBook;

@@ -1,9 +1,20 @@
+import { Fragment, useState } from "react";
 import { Routes, Route, Link } from "react-router-dom";
+import { useApolloClient } from "@apollo/client";
 import Authors from "./components/Authors";
 import Books from "./components/Books";
-import NewBook from "./components/NewBook";
+import AddBook from "./components/AddBook";
+import Login from "./components/Login";
 
 const App = () => {
+    const [token, setToken] = useState(null);
+    const client = useApolloClient();
+
+    const logout = () => {
+        setToken(null);
+        localStorage.clear();
+        client.resetStore();
+    };
     return (
         <div>
             <div>
@@ -13,14 +24,24 @@ const App = () => {
                 <button>
                     <Link to="/books">books</Link>
                 </button>
-                <button>
-                    <Link to="/newbook">newbook</Link>
-                </button>
+                {token ? (
+                    <Fragment>
+                        <button>
+                            <Link to="/addbook">add book</Link>
+                        </button>
+                        <button onClick={logout}>logout</button>
+                    </Fragment>
+                ) : (
+                    <button>
+                        <Link to="/login">log in</Link>
+                    </button>
+                )}
             </div>
             <Routes>
-                <Route path="/authors" element={<Authors />} />
+                <Route path="/authors" element={<Authors token={token} />} />
                 <Route path="/books" element={<Books />} />
-                <Route path="/newbook" element={<NewBook />} />
+                <Route path="/addbook" element={<AddBook token={token} />} />
+                <Route path="/login" element={<Login setToken={setToken} />} />
             </Routes>
         </div>
     );
