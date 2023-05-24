@@ -171,7 +171,7 @@ const resolvers = {
                 return books.filter(byGenre);
             }
         },
-        allAuthors: () => authors,
+        allAuthors: async () => await Author.find({}),
     },
     Author: {
         name: (root) => root.name,
