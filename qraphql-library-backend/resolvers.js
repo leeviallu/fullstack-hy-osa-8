@@ -69,17 +69,15 @@ const resolvers = {
                     },
                 });
             }
+            if (!author) {
+                author = new Author({
+                    name: args.author,
+                });
+                await author.save();
+            }
+            const book = new Book({ ...args, author: author._id });
             try {
-                if (!author) {
-                    author = new Author({
-                        name: args.author,
-                    });
-                    await author.save();
-                }
-                const book = new Book({ ...args, author: author._id });
-                const newBook = await book.save();
-                pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
-                return newBook;
+                await book.save();
             } catch (error) {
                 throw new GraphQLError("Saving book failed", {
                     extensions: {
@@ -89,9 +87,10 @@ const resolvers = {
                     },
                 });
             }
+            pubsub.publish("BOOK_ADDED", { bookAdded: book });
+            return book;
         },
         editAuthor: async (root, args, context) => {
-            console.log(context);
             const currentUser = context.currentUser;
             if (!currentUser) {
                 throw new GraphQLError("not authenticated", {
