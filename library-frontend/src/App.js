@@ -5,6 +5,7 @@ import Authors from "./components/Authors";
 import Books from "./components/Books";
 import AddBook from "./components/AddBook";
 import Login from "./components/Login";
+import Recommendations from "./components/Recommendations";
 
 const App = () => {
     const [token, setToken] = useState(null);
@@ -29,6 +30,9 @@ const App = () => {
                         <button>
                             <Link to="/addbook">add book</Link>
                         </button>
+                        <button>
+                            <Link to="/recommendations">recommendations</Link>
+                        </button>
                         <button onClick={logout}>logout</button>
                     </Fragment>
                 ) : (
@@ -41,6 +45,10 @@ const App = () => {
                 <Route path="/authors" element={<Authors token={token} />} />
                 <Route path="/books" element={<Books />} />
                 <Route path="/addbook" element={<AddBook token={token} />} />
+                <Route
+                    path="/recommendations"
+                    element={<Recommendations token={token} />}
+                />
                 <Route path="/login" element={<Login setToken={setToken} />} />
             </Routes>
         </div>
