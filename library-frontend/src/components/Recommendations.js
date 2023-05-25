@@ -33,7 +33,9 @@ const Recommendations = ({ token }) => {
     const { allAuthors } = authorsQuery.data;
     return (
         <div>
-            <p>recommendations</p>
+            <h1>
+                <b>recommendations</b>
+            </h1>
             <table>
                 <tbody>
                     <tr>
