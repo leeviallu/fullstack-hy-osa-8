@@ -6,16 +6,12 @@ import { ALL_AUTHORS } from "../queries";
 const Books = () => {
     const [genre, setGenre] = useState("");
     const allGenres = [];
-    const allBooksQuery = useQuery(ALL_BOOKS, {
-        pollInterval: 2000,
-    });
+    const allBooksQuery = useQuery(ALL_BOOKS);
     const filteredBooksQuery = useQuery(ALL_BOOKS, {
         variables: { genre },
         pollInterval: 2000,
     });
-    const authorsQuery = useQuery(ALL_AUTHORS, {
-        pollInterval: 2000,
-    });
+    const authorsQuery = useQuery(ALL_AUTHORS);
     if (
         allBooksQuery.loading ||
         filteredBooksQuery.loading ||
@@ -24,7 +20,7 @@ const Books = () => {
         return null;
     }
     const filteredBooks = filteredBooksQuery.data.allBooks;
-    const authors = authorsQuery.data.allAuthors;
+    const { allAuthors } = authorsQuery.data;
     const { allBooks } = allBooksQuery.data;
     allBooks.forEach((book) => {
         book.genres.forEach((genre) => {
@@ -49,7 +45,7 @@ const Books = () => {
                         <th>published</th>
                     </tr>
                     {filteredBooks.map((a) => {
-                        const author = authors.find((author) => {
+                        const author = allAuthors.find((author) => {
                             return a.author === author.id;
                         });
                         return (
