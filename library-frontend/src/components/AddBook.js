@@ -13,6 +13,7 @@ const AddBook = ({ token }) => {
     const [createBook] = useMutation(CREATE_BOOK, {
         update: (cache, response) => {
             updateCache(cache, { query: ALL_BOOKS }, response.data.addBook);
+            window.alert("Book has been added");
         },
     });
 
