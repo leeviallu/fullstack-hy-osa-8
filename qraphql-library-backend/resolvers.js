@@ -4,6 +4,9 @@ const Author = require("./models/author");
 const Book = require("./models/book");
 const User = require("./models/user");
 
+const { PubSub } = require("graphql-subscriptions");
+const pubsub = new PubSub();
+
 const resolvers = {
     Query: {
         bookCount: async () => await Book.countDocuments(),
@@ -75,6 +78,7 @@ const resolvers = {
                 }
                 const book = new Book({ ...args, author: author._id });
                 const newBook = await book.save();
+                pubsub.publish("BOOK_ADDED", { bookAdded: newBook });
                 return newBook;
             } catch (error) {
                 throw new GraphQLError("Saving book failed", {
@@ -145,6 +149,11 @@ const resolvers = {
                 id: user._id,
             };
             return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+        },
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator("BOOK_ADDED"),
         },
     },
 };
